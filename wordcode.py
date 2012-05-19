@@ -47,6 +47,73 @@ def clearword(word, secondchar, string):
 			linetarget = False
 	return word
 
+#Returns a tuple of sets (hashtables) of words from a given list of words separated by whitespace (newlines or spaces), where every word is included in the first set of the tuple and words prepended by ampersands are excluded in the second tuple. Used in this program to create dictionaries.   
+def ampstring_to_set(list):
+  speak = list.split()
+  dictuple = [[],[]]
+  for word in speak:
+    val = True
+    if word[0]=='&':
+      val = False
+    word = word.strip('&\n')
+    dictuple[0].append(word)
+    if val:
+      dictuple[1].append(word)
+  return dictuple
+
+#Default cases for expregstringout
+def emptycond(string):
+  return True
+
+def emptymod(string):
+  return string
+
+def choponemod(string):
+  return string[:-1]
+
+#Put other cases for expregstringout here
+
+
+# Given a list of strings (regular expressions found by the program), a function that takes a string and returns a true false value, a modifier function that takes the string and 'fixes' it for output, and an output string (explanation), returns either an empty string or the regular expression followed by the output string. Used to handle output for the program
+def expregstringout(string, exp, stringmod=emptymod, cond=emptycond):
+  s = ""
+  for strin in string:
+    if cond(strin):
+      s = s + stringmod(strin) + exp
+  return s
+
+def wordcounter(line, periodcount, wordcount, wordlist, capslist):
+  words = line.split()
+  for word in words:
+    front = True
+    back = True
+    while (front or back) and word != "":
+      if ord(word[0])>127:
+        word = word[1:]
+      else:
+        front = False	
+      if word!="" and ord(word[-1])>127:
+        word = word[:-1]
+      else:
+        back = False
+    word = word.strip('[]/\:;,-><()\"\'*')
+    if word.rfind(".")!=-1 or word.rfind("?")!=-1 or word.rfind("!")!=-1:
+       periodcount = periodcount+1
+       word = word.strip('.?!')
+    wordcount = wordcount + 1
+    if word != "":
+      if word[0].isupper():
+        if capslist.has_key(word):
+          capslist[word] = capslist[word]+1
+        else:
+          capslist[word] = 1
+      word = word.lower()		
+      if wordlist.has_key(word):
+        wordlist[word] = wordlist[word] +1
+      else:
+        wordlist[word] = 1
+  return [wordlist, capslist, periodcount, wordcount]
+
 def stringprocess(string):
   wordcount = 0
   wordlist = {}
@@ -61,10 +128,10 @@ def stringprocess(string):
   bbcode = r'\[/?[A-Za-z]+\]'
   passivevoice = (re.compile('\swas\s[A-Za-z]+ed\s'),re.compile(r'\swere\s[A-Za-z]+ed\s'),re.compile(r'\sis\s[A-Za-z]+ed\s'),re.compile(r'\sare\s[A-Za-z]+ed\s'),re.compile(r'\swas\s[A-Za-z]+en\s'),re.compile(r'\swere\s[A-Za-z]+en\s'),re.compile(r'\sis\s[A-Za-z]+en\s'),re.compile(r'\sare\s[A-Za-z]+en\s'),re.compile('\sget\s[A-Za-z]+ed\s'),re.compile('\sget\s[A-Za-z]+en\s'),re.compile('\sgot\s[A-Za-z]+ed\s'),re.compile('\sgot\s[A-Za-z]+en\s'),re.compile('\shad\sbeen\s[A-Za-z]+ed\sby\s'),re.compile('\shad\sbeen\s[A-Za-z]+en\sby\s'))
   dialoguecomma = re.compile('([A-Za-z\']+,\" ([A-Za-z\'-]+ )?(Mrs?\.? )?(Ms\.? )?(Dr\.? )?(the )?([A-Z]?[a-z\'-]+ ){,2}([A-Z]?[a-z]+)[ ,\.!\?;:-])')
-  dialogueperiod = re.compile('([A-Za-z]+[.!\?(...)-]" ([A-Z][A-Za-z\'-]*|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,.!\?;:-])')
+  dialogueperiod = re.compile('([A-Za-z]+[\.!\?(...)-]" ([A-Z][A-Za-z\'-]*|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])')
 #dialogueperiod2 = re.compile('([A-Za-z]+[.!\?(...)-]" [(Mrs?\.? )|(Ms\.? )|(Dr\.? )([A-Za-z\']+ ){,2}([a-z]+ ){,2}[a-z]+[ ,.!\?;:-])')
   dipercheck = re.compile('(((\.\.\.)|[!\?-])\")')
-  chardict = set(['Fluttershy', 'Pinkie', 'Rainbow', 'Dash', 'Rarity', 'Twilight', 'Applebloom', 'Bonbon', 'Braeburn', 'Celestia', 'Cheerilee', 'Colgate', 'Derpy', 'Discord', 'Gilda', 'Luna', 'Lyra', 'Octavia', 'Pipsqueak', 'Blueblood', 'Scootaloo', 'Snails', 'Snips', 'Soarin', 'Spike', 'Spitfire', 'Sweetie', 'Trixie', 'Twist', 'Vinyl', 'Zecora','I','Mr','Mrs','Ms','Dr','Mister','Miss','Doctor'])
+  chardict = set(['Fluttershy', 'Pinkie', 'Rainbow', 'Dash', 'Rarity', 'Twilight', 'Applebloom', 'Apple', 'Bloom', 'Bon', 'Braeburn', 'Celestia', 'Cheerilee', 'Colgate', 'Derpy', 'Discord', 'Gilda', 'Luna', 'Lyra', 'Octavia', 'Pipsqueak', 'Blueblood', 'Scootaloo', 'Snails', 'Snips', 'Soarin', 'Spike', 'Spitfire', 'Sweetie', 'Trixie', 'Twist', 'Vinyl', 'Zecora','I','Mr','Mrs','Ms','Dr','Mister','Miss','Doctor'])
   randcapscheck = re.compile('[A-Za-z\']+[;,]? [A-Z][A-Za-z\']*')
   punctspacecheck = re.compile('[A-Za-z\']+[\.;,!?]"?[A-Za-z][A-Za-z\']*')
   quotepunctoutside = re.compile('[A-Za-z\']+[,\.;!?-]?"[,\.;!?-] [A-Za-z][A-Za-z\']*')
@@ -76,37 +143,19 @@ def stringprocess(string):
 # Main function: 
 #  fw = open('zdictspeak','r')
   dicts = dictreturn.dictionarylist()
+  speak = [[],[]]
+  resspeak = [[],[]]
   fw = dicts[0]  
-  speak = fw.split()
-  line = []
-  common = []
-  for word in speak:
-    val = True
-    if word[0]=='&':
-      val = False
-    word = word.strip('&\n')
-    line.append(word)
-    if val:
-      common.append(word)
-  resspeak = set(common)
-  speak = set(line)
+  fw = ampstring_to_set(fw)
+  speak[0] = fw[0]
+  resspeak[0] = fw[1]
   fw = dicts[1]
-  pspeak = fw.split()
-  line = []
-  common = []
-  for word in pspeak:
-    val = True
-    if word[0]=='&':
-      val = False
-    word = word.strip('&\n')
-    line.append(word)
-    if val:
-      common.append(word)
-  presspeak = set(common)
-  pspeak = set(line)
+  fw = ampstring_to_set(fw)
+  speak[1] = fw[0]
+  resspeak[1] = fw[1]
   #fw.close()
   #fw = open('zdict250','r')
-  fw = "it  in  the  just  was  so  that  and  on  of  her  as  at  all  to  a  up  out  for  she  no  with  you  what  back  be  this  have  then  had  into  were  from  but  one  not  more  would  do  is  now  could  like  them  been  down  time  over  they  if  there  about  even  me  by  how  before  can  get  an  know  did  around  my  head  still  eyes  off  your  see  said  when  we  too  are  little  don't  some  go  right  only  it's  again  something  way  looked  here  after  didn't  or  their  think  well  good  much  never  make  pony  who  away  two  through  other  than  made  look  ponies  come  thought  turned  first  going  any  face  long  where  he  his  you're  hoof  got  took  why  that's  let  will  sure  really  voice  few  hooves  herself  want  another  asked  very  door  thing  wasn't  while  take  him  help  say  behind  moment  room  came  last  need  day  looking  felt  being  once  though  enough  anything  began  ever  tell  left  its  every  next  things  knew  most  side  own  friends  us  can't  each  mind  smile  front  should  night  which  air  place  those  mean  couldn't  found  bit  against  small  magic  saw  always  find  sorry  has  yes  seemed  nothing  our  new  work  keep  unicorn  open  better  heard  trying  until  almost  both  smiled  pegasus  mane  went  nodded  tried  gave  because  told  light  under  best  wanted  finally  friend  ground  put  wings  mouth  horn  shook  already  okay  three  far  started  such  she's  towards  course  quickly  these  same  floor  maybe  big  across  great  am  stood  she'd  must  seen  without  oh  sister  old  feel  slowly  life  stopped  everypony  blue  yeah  mare  home  inside  love  quite  between  might  hard  table"
+  fw = dicts[2]
   common = fw.split()
   line = []
   for word in common:
@@ -143,14 +192,17 @@ def stringprocess(string):
     #missedcaps = regcounter(line, missedcaps, missCapPeriod)
     line = re.sub(bbcode,"",line)
     matchObj = missCapPeriod.findall(line)
-    for lead in matchObj:
-      er = er + lead + ' | <a href="http://auto-reviewer.appspot.com/explanations#capserror">Capitalisation error<br></a>'
+#    for lead in matchObj:
+#      er = er + lead + ' | <a href="http://auto-reviewer.appspot.com/explanations#capserror">Capitalisation error<br></a>'
+    er = er + expregstringout(matchObj, ' | <a href="http://auto-reviewer.appspot.com/explanations#capserror">Capitalisation error<br></a>')
     matchObj = punctspacecheck.findall(line)
-    for lead in matchObj:
-      er = er + lead + ' | <a href="http://auto-reviewer.appspot.com/explanations#punctspace">Space following punctuation<br></a>'
+#    for lead in matchObj:
+#      er = er + lead + ' | <a href="http://auto-reviewer.appspot.com/explanations#punctspace">Space following punctuation<br></a>'
+    er = er + expregstringout(matchObj, ' | <a href="http://auto-reviewer.appspot.com/explanations#punctspace">Space following punctuation<br></a>')
     matchObj = quotepunctoutside.findall(line)
-    for lead in matchObj:
-      er = er + lead + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#punctinside">Punctuation is generally inside quotes.</a><br>'
+#    for lead in matchObj:
+#      er = er + lead + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#punctinside">Punctuation is generally inside quotes.</a><br>'
+    er = er + expregstringout(matchObj, ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#punctinside">Punctuation is generally inside quotes.</a><br>')
     quoteregex = re.compile('\"[^\"]+?\"')
     matchObj = quoteregex.findall(line)
     for lead in matchObj:
@@ -163,29 +215,18 @@ def stringprocess(string):
     matchObj = dialoguecomma.findall(line)
     for lead in matchObj:
       lead = lead[0]
-      mack = lead
-      lead = lead.split()
-      lead = lead[1:]
-      correct = False
-      for word in lead:
-        word = word.strip(',.?!-;:')
-        if word in speak:
-          correct = True
-      if correct:
-        mack = mack + " | Right\n"
-			#er.write(mack)
-      else:
-        mack = mack + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#speakverb">This should have some sort of speaking verb</a><br>'
-        er = er + mack
+      perregexlist.append([lead,0])
+
     matchObj = doublespace.findall(line)
-    for lead in matchObj:
-      lead = lead + ' | <a href="http://auto-reviewer.appspot.com/explanations#doublespace">You have an extra space here</a><br>'
-      er = er + lead
+#    for lead in matchObj:
+#      lead = lead + ' | <a href="http://auto-reviewer.appspot.com/explanations#doublespace">You have an extra space here</a><br>'
+#      er = er + lead
+    er = er + expregstringout(matchObj, ' | <a href="http://auto-reviewer.appspot.com/explanations#doublespace">You have an extra space here</a><br>')
 	#Period checking will be handled when characters are listed.
     matchObj = dialogueperiod.findall(line)
     for lead in matchObj:
       lead = lead[0]
-      perregexlist.append(lead)
+      perregexlist.append([lead, 1])
     matchObj = randcapscheck.findall(line)
     for lead in matchObj:
       capsregexlist.append(lead)
@@ -194,6 +235,7 @@ def stringprocess(string):
       matchObj = matchObj.group()
       matchObj = matchObj + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#parastart">Paragraph start should be capitalised.</a><br>'
       er = er + matchObj
+    
     matchObj = endline.findall(line)
     for lead in matchObj:
       lead = lead[:-1]
@@ -202,50 +244,16 @@ def stringprocess(string):
     matchObj = frontdial.findall(line)
     for lead in matchObj:
       lead = lead[0]
-      mack = lead
-      lead = lead.split()
-      lead = lead[:-1]
-      correct = False
-      for word in lead:
-        word = word.strip(',.?!-;:')
-        if word in speak:
-          correct = True
-      if correct:
-        mack = mack + " | Right\n"
-        #er = er + mack
-      else:
-        mack = mack + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#speakverb">This should have some sort of speaking verb</a><br>'
-        er = er + mack
+      perregexlist.append([lead,2])
 	#wordcount section
-    words = line.split()
-    for word in words:
-      front = True
-      back = True
-      while (front or back) and word != "":
-        if ord(word[0])>127:
-          word = word[1:]
-        else:
-          front = False	
-        if word!="" and ord(word[-1])>127:
-          word = word[:-1]
-        else:
-          back = False
-      word = word.strip('[]/\:;,-><()\"\'*')
-      if word.rfind(".")!=-1 or word.rfind("?")!=-1 or word.rfind("!")!=-1:
-         periodcount = periodcount+1
-         word = word.strip('.?!')
-      wordcount = wordcount + 1
-      if word != "":
-        if word[0].isupper():
-          if capslist.has_key(word):
-            capslist[word] = capslist[word]+1
-          else:
-            capslist[word] = 1
-        word = word.lower()		
-        if wordlist.has_key(word):
-          wordlist[word] = wordlist[word] +1
-        else:
-          wordlist[word] = 1
+    #Put in function
+    helper = wordcounter(line, periodcount, wordcount, wordlist, capslist)
+    wordlist = helper[0]
+    capslist = helper[1]
+    periodcount = helper[2]
+    wordcount = helper[3]
+  #End of line by line for loop
+  
   waswere = 0
   for word in ('was','is','were','are', 'be', 'been'):
     if wordlist.has_key(word):
@@ -345,24 +353,88 @@ def stringprocess(string):
       charcount+=1
     if v>=3 and kfloat/v<1.26 and k!="I" and k!="I'm" and k!="I've" and k!="I'd" and k!="I'll":
       chardict.add(k)
-
+  current = 0
+  toggled = False
   for lead in perregexlist:
-    mack = lead
-    lead = lead.split()
-    lead = lead[1:]
-    correct = True
-    for word in lead:
-      word = word.strip(',.?!-;:')
-      if word in resspeak:
-        correct = False
-        if dipercheck.search(mack) and lead[0].strip(',.?!-;:') in chardict:
+    if lead[1] == 0:
+      lead = lead[0]
+      mack = lead
+      lead = lead.split()
+      lead = lead[1:]
+      correct = False
+      for word in lead:
+        word = word.strip(',.?!-;:')
+        if word in speak[current]:
           correct = True
-    if correct:
-      mack = mack + " | Right\n"
+          toggled = True
+        elif word in speak[1-current]:
+          current = 1-current
+          correct = True
+          if toggled:
+            dummy = mack + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#tensechange"> You change tenses here</a><br>'
+            er = er + dummy
+          else:
+            toggled = True
+      if correct:
+        mack = mack + " | Right\n"
+			#er.write(mack)
+      else:
+        mack = mack + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#speakverb">This should have some sort of speaking verb</a><br>'
+        er = er + mack
+    elif lead[1] == 1:
+      lead = lead[0]
+      mack = lead
+      lead = lead.split()
+      lead = lead[1:]
+      correct = True
+      for word in lead:
+        word = word.strip(',.?!-;:')
+        if word in resspeak[current]:
+          correct = False
+          toggled = True
+          if dipercheck.search(mack) and lead[0].strip(',.?!-;:') in chardict:
+            correct = True
+        elif word in resspeak[1-current]:
+          correct = False
+          if dipercheck.search(mack) and lead[0].strip(',.?!-;:') in chardict:
+            correct = True
+          current = 1-current
+          if toggled:
+            dummy = mack + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#tensechange"> You change tenses here</a><br>'
+            er = er + dummy
+          else:
+            toggled = True
+      if correct:
+        mack = mack + " | Right\n"
       #er.write(mack)
-    else:
-      mack = mack + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#pererror">Dialogue attribution should not be capitalised or period error</a><br>'
-      er = er + mack
+      else:
+        mack = mack + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#pererror">Dialogue attribution should not be capitalised or period error</a><br>'
+        er = er + mack
+    elif lead[1] == 2:
+      lead = lead[0]
+      mack = lead
+      lead = lead.split()
+      lead = lead[:-1]
+      correct = False
+      for word in lead:
+        word = word.strip(',.?!-;:')
+        if word in speak[current]:
+          correct = True
+          toggled = True
+        elif word in speak[1-current]:
+          correct = True
+          if toggled:
+            dummy = mack + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#tensechange"> You change tenses here</a><br>'
+            er = er + dummy
+          else:
+            toggled = True
+      if correct:
+        mack = mack + " | Right\n"
+        #er = er + mack
+      else:
+        mack = mack + ' | Check this: <a href="http://auto-reviewer.appspot.com/explanations#speakverb">This should have some sort of speaking verb</a><br>'
+        er = er + mack
+
   for lead in capsregexlist:
     mack = lead
     lead = lead.split()
@@ -397,3 +469,33 @@ def stringprocess(string):
   #er.close()
   #fv.close()
   return [fw, stats]
+
+def passiveprocess(string):
+  #passivevoice = (re.compile('[A-Za-z\'-]+ was\s[A-Za-z]+ed[\s\.]([A-Za-z\'-]+ )?'),re.compile('[A-Za-z\'-]+ were\s[A-Za-z]+ed\s'),re.compile(r'\sis\s[A-Za-z]+ed\s'),re.compile(r'\sare\s[A-Za-z]+ed\s'),re.compile(r'\swas\s[A-Za-z]+en\s'),re.compile(r'\swere\s[A-Za-z]+en\s'),re.compile(r'\sis\s[A-Za-z]+en\s'),re.compile(r'\sare\s[A-Za-z]+en\s'),re.compile('\sget\s[A-Za-z]+ed\s'),re.compile('\sget\s[A-Za-z]+en\s'),re.compile('\sgot\s[A-Za-z]+ed\s'),re.compile('\sgot\s[A-Za-z]+en\s'),re.compile('\shad\sbeen\s[A-Za-z]+ed\sby\s'),re.compile('\shad\sbeen\s[A-Za-z]+en\sby\s'))
+#'([A-Za-z\'-]+ was|(were)|(is)|(are)|(get)|(got)|(had been)|(has been)) [A-Za-z]+((en)|(ed))[ \.,]([A-Za-z\'-]+)?)'
+  passivevoice = map(re.compile,('([A-Za-z\'-]+ was [A-Za-z]+en[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ was [A-Za-z]+ed[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ were [A-Za-z]+en[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ were [A-Za-z]+ed[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ are [A-Za-z]+en[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ are [A-Za-z]+ed[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ is [A-Za-z]+en[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ is [A-Za-z]+ed[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ get [A-Za-z]+en[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ get [A-Za-z]+ed[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ got [A-Za-z]+en[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ got [A-Za-z]+ed[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ has been [A-Za-z]+en[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ has been [A-Za-z]+ed[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ had been [A-Za-z]+en[ \.,]([A-Za-z\'-]+)?)','([A-Za-z\'-]+ had been [A-Za-z]+ed[ \.,]([A-Za-z\'-]+)?)'))
+  f = string.split('\n')
+  er = ''
+  for line in f:
+	#handling " and ' in line
+    word = ''
+    for i in line:
+      j = ord(i)
+      if j<256:
+        word = word + i
+      elif j==8217 or j==8216:
+        word = word + '\''
+      elif j==8220 or j==8221:
+        word = word + '\"'
+      elif j==8212 or j==8211:
+        word = word + '-'
+      elif j==8230:
+        word = word + '...'
+    line = word
+    for reg in passivevoice:
+      matchObj = reg.findall(line)
+      if matchObj != []:
+        for lead in matchObj:
+          lead = [lead[0]]
+          er = er + expregstringout(lead, '<br>')
+  return er
