@@ -155,7 +155,8 @@ def mainprocess(string, optionslist=[1,2,1,1,1,1,1,1,2,1,1], outputsuppress=[1,1
   output.append(periodcount)
   beconjugations = 0
   for item in ('was','were','is','are','be','been'):
-    beconjugations += wordlist[item]
+    if item in wordlist:
+      beconjugations += wordlist[item]
   # Note: Ensure this is performed exactly once if re-entrance
   # Perhaps by defining a progress class
   sortedcapslist = sorted(capslist.iteritems(), key=operator.itemgetter(1), reverse=True)

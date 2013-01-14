@@ -38,6 +38,7 @@ def regexcountclass(obj, text, capslist=[]):
 
 # List of speaking verbs, one with all and one without those that aren't usually speaking verbs, but could be (Ampersands).
 # To be deprecated by more advanced sentence processing
+# Temporary, will be moved once dictionary classes are done.
 dictspeak = 'said replied whispered added muttered answered continued admitted explained stated &sighed murmured agreed called responded mumbled commented remarked growled chuckled interrupted assured grumbled repeated &laughed offered announced asked finished insisted hissed suggested snapped corrected retorted &started declared stammered informed mused groaned interjected rasped snorted observed &managed reminded drawled chimed huffed snarled warned reassured noted greeted giggled countered ordered moaned grunted complained cooed gasped intoned claimed confirmed chided clarified lied concluded apologized sneered protested uttered teased shouted confessed squeaked whined stuttered whimpered groused purred piped addressed conceded panted commanded chirped begged argued instructed asserted promised supplied soothed scoffed pleaded scolded exclaimed sobbed snickered &returned barked croaked advised boomed allowed yelled quipped reported stressed indicated snipped proclaimed coughed mentioned &motioned reasoned joked echoed cried &remembered recited &raised complimented slurred wheezed blurted confided &sounded crooned admonished demanded pondered seethed hummed dismissed challenged defended encouraged relented praised whinnied urged grumped prompted cautioned pressed mocked accused neighed joined puffed rattled taunted wondered affirmed surmised nickered gushed boasted snarked whistled marveled persisted attempted congratulated consoled threatened bragged reiterated proposed coaxed reminisced bellowed choked lectured mouthed &pouted emphasized ventured elaborated blubbered recounted realized acknowledged trailed cackled concurred amended introduced screamed griped guessed &followed fussed beckoned punctuated revealed resumed chortled wailed droned &jabbed entreated relieved sniggered considered buzzed closed implored recalled burbled saluted pipped requested pronounced objected fretted squealed acquiesced gloated riposted provided guffawed wished rebuked recollected related wheedled cracked sputtered sniveled reckoned roared garbled jeered annoyed quoted lamented fumed appraised opened hushed hedged comforted noticed murred checked listed assessed babbled accented demurred chanced worried narrated prayed volunteered fibbed rambled crackled hazarded thanked signed hollered goaded restated fawned concerned cussed summarised excused humphed blared bemoaned opted imagined rationalized faltered faded specified cheered tested capitulated cajoled admired sweared averted halted nipped counted backpedaled backpedalled interpreted produced ended patronized disagreed covered vocalized pffted crowed exhaled mollified identified leveled referred averred ranted pined mulled pled reprimanded broached reflected gurgled raged bargained kidded completed tutted recovered chanted forced recommended flattered intervened inserted approved gesticulated reproved contributed attested heckled clicked convinced postulated &hailed divulged pressured harrumphed snurked invited solicited opined maintained recognized deflected pontificated described deduced refuted warbled apologised deferred bawled transitioned theorized granted repudiated vowed butted questioned sussed tisked twittered translated hinted jibed shushed jested ribbed drolled speculated gleaned emulated squawked cursed reproached directed parroted iterated chastised consented ingratiated acceded hemmed implied interrogated spat &began &came remonstrated'
 dictspeak = dictspeak.split() 
 templist1 = [] # all speaking verbs
@@ -153,17 +154,44 @@ def randcaps(section, charlist):
 #Initialises all Error instances and returns a list of them.
 # This removes the necessity for the individual error definitions, although they are left commented in case the come in useful.
 def initialise():
-  return [Error("[A-Z]?[a-z]+\.[\'\"]?\s[\'\"]?[a-z]+","Capitalisation Error", trivial, [], 'This checks when the word immediately after a full stop is not capitalised.','/Conventions#MissedCaps'), 
-Error(('\swas\s[A-Za-z]+ed\s','\swere\s[A-Za-z]+ed\s','\sis\s[A-Za-z]+ed\s','\sare\s[A-Za-z]+ed\s','\swas\s[A-Za-z]+en\s','\swere\s[A-Za-z]+en\s','\sis\s[A-Za-z]+en\s','\sare\s[A-Za-z]+en\s','\sget\s[A-Za-z]+ed\s','\sget\s[A-Za-z]+en\s','\sgot\s[A-Za-z]+ed\s','\sgot\s[A-Za-z]+en\s','\shad\sbeen\s[A-Za-z]+ed\sby\s','\shad\sbeen\s[A-Za-z]+en\sby\s','\shas\sbeen\s[A-Za-z]+ed\sby\s','\shas\sbeen\s[A-Za-z]+en\sby\s'),"Passive Voice", trivial, [], 'This looks for passive voice, which is where the subject experiences the action, instead of performing the action. While not an error, this is often weaker and less interesting than using the active voice.', '/Style#Passive'), 
-Error('([A-Za-z\']+,\" ([A-Za-z\'-]+ )?(Mrs?\.? )?(Ms\.? )?(Dr\.? )?(the )?([A-Z]?[a-z\'-]+ ){,2}([A-Z]?[a-z]+)[ ,\.!\?;:-])',"Dialogue without speaking verb", dialoguecomma, [],'This checks that dialogue follows generally accepted formatting. In particular, this makes sure that the section of the sentence connected to the dialogue is a direct attribution, rather than an unrelated sentence.','/Dialogue#DialogueSpeaking'), 
-Error(('([A-Za-z]+\." ([A-Za-z\'-]+|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])','([A-Za-z]+!" ([A-Za-z\'-]+|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])', '([A-Za-z]+\?" ([A-Za-z\'-]+|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])', '([A-Za-z]+(\.\.\.)" ([A-Za-z\'-]+|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])','([A-Za-z]+(---)" ([A-Za-z\'-]+|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])'),"Dialogue ends sentence incorrectly", dialogueperiod, [], 'This checks that dialogue follows generally accepted formatting. In particular, this makes sure that when the dialogue has punctuation ending the sentence, the following sentence is not an attribution.','/Dialogue#DialogueEnds'), 
-Error('(([A-Z][A-Za-z\']+ )?([A-Za-z\']+ )?[A-Za-z\']+, \"[A-Za-z\']+)', "Dialogue follows nonattribution", dialoguefront, [], 'This checks that dialogue follows generally accepted formatting. In particular, this checks that a sentence leading into dialogue is an attribution, rather than an unrelated sentence that should be separated.','/Dialogue#DialogueFollows'), 
-Error('[A-Za-z\']+[\.;,!?]{1,3}"?[A-Za-z][A-Za-z\']*',"Punctuation without a trailing space", trivial, [], 'This checks that punctuation is properly separated from the following word.', '/Conventions#PunctSpace'),
-Error('[A-Za-z][A-Za-z\']*[,\.\?!;:\"-]?  \"?[A-Za-z][A-Za-z\']*',"Extra Space", trivial, [], 'This checks that there aren\'t extra spaces between words.', '/Conventions#ExtraSpace'), 
-Error('[A-Za-z\']+[;,]? [A-Z][A-Za-z\']*',"Uncommonly capitalised word", randcaps, [],'This flags words that do not look to be proper nouns that are capitalised in the middle of a sentence.','/Conventions#RandCaps'), 
-Error('[A-Za-z\']+[,\.;!?-]?"[,\.;!?-] [A-Za-z][A-Za-z\']*',"Punctuation Outside Quotes", trivial, [], 'This flags punctuation that does not follow convention and occurs outside of the quotation marks.', '\Dialogue#PunctOutside'), 
-Error('^\s*[\'\"]?[a-z\']+ ',"Beginning of paragraph not capitalised", trivial, [], 'This checks that the initial sentence of each paragraph is properly capitalised.','\Conventions#ParagraphCaps'), 
-Error('[A-Za-z\']+[,\.\?!:]? [A-Za-z\']+[\",]?\s*$',"End of paragraph missing punctuation", trivial, [], 'This checks that the sentence at the end of each paragraph is not missing ending punctuation.','Conventions#EndingPunct')]
+  return [
+    Error("[A-Z]?[a-z]+\.[\'\"]?\s[\'\"]?[a-z]+","Capitalisation Error", trivial, [], 
+          'This checks when the word immediately after a full stop is not capitalised.','/Conventions#MissedCaps'), 
+    Error(('\swas\s[A-Za-z]+ed\s','\swere\s[A-Za-z]+ed\s','\sis\s[A-Za-z]+ed\s','\sare\s[A-Za-z]+ed\s',
+           '\swas\s[A-Za-z]+en\s','\swere\s[A-Za-z]+en\s','\sis\s[A-Za-z]+en\s','\sare\s[A-Za-z]+en\s',
+           '\sget\s[A-Za-z]+ed\s','\sget\s[A-Za-z]+en\s','\sgot\s[A-Za-z]+ed\s','\sgot\s[A-Za-z]+en\s',
+           '\shad\sbeen\s[A-Za-z]+ed\sby\s','\shad\sbeen\s[A-Za-z]+en\sby\s','\shas\sbeen\s[A-Za-z]+ed\sby\s',
+           '\shas\sbeen\s[A-Za-z]+en\sby\s'),"Passive Voice", trivial, [], 
+           'This looks for passive voice, which is where the subject experiences the action, instead of performing the action. While'+
+           ' not an error, this is often weaker and less interesting than using the active voice.', '/Style#Passive'), 
+    Error('([A-Za-z\']+,\" ([A-Za-z\'-]+ )?(Mrs?\.? )?(Ms\.? )?(Dr\.? )?(the )?([A-Z]?[a-z\'-]+ ){,2}([A-Z]?[a-z]+)[ ,\.!\?;:-])',
+           "Dialogue without speaking verb", dialoguecomma, [],'This checks that dialogue follows generally accepted formatting.'+
+           ' In particular, this makes sure that the section of the sentence connected to the dialogue is a direct attribution,'+
+           ' rather than an unrelated sentence.','/Dialogue#DialogueSpeaking'), 
+    Error(('([A-Za-z]+\." ([A-Za-z\'-]+|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])',
+           '([A-Za-z]+!" ([A-Za-z\'-]+|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])',
+           '([A-Za-z]+\?" ([A-Za-z\'-]+|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])', 
+           '([A-Za-z]+(\.\.\.)" ([A-Za-z\'-]+|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])',
+           '([A-Za-z]+(---)" ([A-Za-z\'-]+|(Mrs?\.?)|(Ms\.?)|(Dr\.?)) ([A-Z][a-z\']+ ){,2}([a-z-]+ ){,2}[a-z]+[ ,\.!\?;:-])'),
+           "Dialogue ends sentence incorrectly", dialogueperiod, [], 'This checks that dialogue follows generally accepted '+
+           'formatting. In particular, this makes sure that when the dialogue has punctuation ending the sentence, the following'+
+           ' sentence is not an attribution.','/Dialogue#DialogueEnds'), 
+    Error('(([A-Z][A-Za-z\']+ )?([A-Za-z\']+ )?[A-Za-z\']+, \"[A-Za-z\']+)', "Dialogue follows nonattribution", dialoguefront, [], 
+           'This checks that dialogue follows generally accepted formatting. In particular, this checks that a sentence leading '+
+           'into dialogue is an attribution, rather than an unrelated sentence that should be separated.','/Dialogue#DialogueFollows'), 
+    Error('[A-Za-z\']+[\.;,!?]{1,3}"?[A-Za-z][A-Za-z\']*',"Punctuation without a trailing space", trivial, [], 
+          'This checks that punctuation is properly separated from the following word.', '/Conventions#PunctSpace'),
+    Error('[A-Za-z][A-Za-z\']*[,\.\?!;:\"-]?  \"?[A-Za-z][A-Za-z\']*',"Extra Space", trivial, [], 
+          'This checks that there aren\'t extra spaces between words.', '/Conventions#ExtraSpace'), 
+    Error('[A-Za-z\']+[;,]? [A-Z][A-Za-z\']*',"Uncommonly capitalised word", randcaps, [],'This flags words that do not look '+
+          'to be proper nouns that are capitalised in the middle of a sentence.','/Conventions#RandCaps'), 
+    Error('[A-Za-z\']+[,\.;!?-]?"[,\.;!?-] [A-Za-z][A-Za-z\']*',"Punctuation Outside Quotes", trivial, [], 
+          'This flags punctuation that does not follow convention and occurs outside of the quotation marks.', '\Dialogue#PunctOutside'), 
+    Error('^\s*[\'\"]?[a-z\']+ ',"Beginning of paragraph not capitalised", trivial, [], 
+          'This checks that the initial sentence of each paragraph is properly capitalised.','\Conventions#ParagraphCaps'), 
+    Error('[A-Za-z\']+[,\.\?!:]? [A-Za-z\']+[\",]?\s*$',"End of paragraph missing punctuation", trivial, [], 
+          'This checks that the sentence at the end of each paragraph is not missing ending punctuation.','Conventions#EndingPunct')
+  ]
 
 #TODO: Add links to commented definitions
 

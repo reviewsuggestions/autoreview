@@ -26,44 +26,53 @@ def asciiconvert(s):
       i = i+1
     # Cases to replace special elements
     # single quotes
-    elif (ord(s[i])==226 and ord(s[i+1])==128 and (ord(s[i+2])==153 or ord(s[i+2])==152)) or (ord(s[i])==8216 or ord(s[i])==8217 or ord(s[i])==8219):
+    elif (ord(s[i])==226 and ord(s[i+1])==128 and (ord(s[i+2])==153 or 
+          ord(s[i+2])==152)) or (ord(s[i])==8216 or ord(s[i])==8217 or 
+          ord(s[i])==8219):
       word += "\'"
       if uch(s,i): i+=1
       else:
         i += 3
     # double quotes
-    elif (ord(s[i])==226 and ord(s[i+1])==128 and (ord(s[i+2])==157 or ord(s[i+2])==156 or ord(s[i+2])==158)) or (ord(s[i])==8220 or ord(s[i])==8221):
+    elif (ord(s[i])==226 and ord(s[i+1])==128 and (ord(s[i+2])==157 or 
+          ord(s[i+2])==156 or ord(s[i+2])==158)) or (ord(s[i])==8220 or 
+          ord(s[i])==8221):
       word += "\""
       if uch(s,i): i+=1
       else:
         i += 3    
     #ellipses
-    elif (ord(s[i])==226 and ord(s[i+1])==128 and (ord(s[i+2])==166)) or ord(s[i])==8230:
+    elif (ord(s[i])==226 and ord(s[i+1])==128 and (
+          ord(s[i+2])==166)) or ord(s[i])==8230:
       word += "..."
       if uch(s,i): i+=1
       else:
         i += 3
     #dashes
     #may be handled separately
-    elif (ord(s[i])==226 and ord(s[i+1])==128 and (ord(s[i+2])==147 or ord(s[i+2])==148)) or (ord(s[i])==8211 or ord(s[i])==8212):
+    elif (ord(s[i])==226 and ord(s[i+1])==128 and (ord(s[i+2])==147 or 
+          ord(s[i+2])==148)) or (ord(s[i])==8211 or ord(s[i])==8212):
       word += "--"
       if uch(s,i): i+=1
       else:
         i += 3
     #interrobang
-    elif (ord(s[i])==226 and ord(s[i+1])==128 and (ord(s[i+2])==189)) or (ord(s[i])==8253):
+    elif (ord(s[i])==226 and ord(s[i+1])==128 and (
+          ord(s[i+2])==189)) or (ord(s[i])==8253):
       word += "?!"
       if uch(s,i): i+=1
       else:
         i += 3
     # accented e, e backaccent,e umlaut
-    elif ord(s[i])==195 and (ord(s[i+1]) in range(168,172)) or (ord(s[i]) in range(232,236)):
+    elif ord(s[i])==195 and (ord(s[i+1]) in range(168,172)) or (
+         ord(s[i]) in range(232,236)):
       word += "e"
       if ucl(s,i): i+=1
       else:
         i += 2
     # a hat, a backaccent, a umlaut, a circle
-    elif (ord(s[i])==195 and (ord(s[i+1]) in range(160,166))) or (ord(s[i]) in range(224,229)):
+    elif (ord(s[i])==195 and (ord(s[i+1]) in range(160,166))) or (
+          ord(s[i]) in range(224,229)):
       word += "a"
       if ucl(s,i): i+=1
       else:
@@ -75,19 +84,22 @@ def asciiconvert(s):
       else:
         i += 2
     # i umlaut, i accent, i backaccent
-    elif (ord(s[i])==195 and (ord(s[i+1]) in range(172,176))) or ord(s[i])in range(236,240):
+    elif (ord(s[i])==195 and (ord(s[i+1]) in range(172,176))) or \
+          ord(s[i])in range(236,240):
       word += "i"
       if ucl(s,i): i+=1
       else:
         i += 2
     # o umlaut, o accent
-    elif (ord(s[i])==195 and (ord(s[i+1]) in range(179,183))) or ord(s[i])in range(242,247):
+    elif (ord(s[i])==195 and (ord(s[i+1]) in range(179,183))) or \
+          ord(s[i])in range(242,247):
       word += "o"
       if ucl(s,i): i+=1
       else:
         i += 2
     # u umlaut, u hat
-    elif (ord(s[i])==195 and (ord(s[i+1]) in range(186,189))) or ord(s[i])in range(249,253):
+    elif (ord(s[i])==195 and (ord(s[i+1]) in range(186,189))) or \
+          ord(s[i])in range(249,253):
       word += "u"
       if ucl(s,i): i+=1
       else:
@@ -157,15 +169,20 @@ def findallgroup(regex, line):
     values = temp
   return values
 
-#This function checks a line for a regular expression given by a string, applies a function that returns a boolean, and depending on the return value returns this error. If there is an error, the function should return true.
-# Arguments: string or list of strings for regular expression (if the regex contains groups, the string should be enclosed in parens), string to check, error message, function 
+#This function checks a line for a regular expression given by a string or a function that takes the string and returns a string, applies a function that returns a boolean, and depending on the return value returns this error. If there is an error, the function should return true.
+# Arguments: string or tuple of strings for regular expression (if the regex contains groups, the string should be enclosed in parens) or a function taking a string or a tuple of functions that take a string and output a string, string to check, error message, function 
 def regexcheck(regex, section, error, funct, charlist={}):
   res = []
   if (isinstance(regex, str)):
     res = findallgroup(regex, section)
-  else:
+  elif (isinstance(regex, tuple) or isinstance(regex, list)):
     for reg in regex:
-      res.extend(findallgroup(reg, section))
+      if isinstance(reg, str):
+        res.extend(findallgroup(reg, section))
+      else: 
+        res.extend(reg(section))
+  else:
+   res = regex(section)
   firstinc = True
   inclist = []
   if DEBUG:

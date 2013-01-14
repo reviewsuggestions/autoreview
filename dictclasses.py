@@ -135,7 +135,7 @@ class Verb(Word):
     #self.3Past: Same as 1Past
     #self.pluralPast: Same as 2Past
     self.pastPer = conj[5]
-    #self.presPer: Same as pastPer
+    #TODO: Fix this self.presPer : Same as pastPer
     #self.futPer: Same as pastPer
     #self.cond: Same as base
     #self.perfectCond: Same as perfect
@@ -146,7 +146,17 @@ class Verb(Word):
     #TODO: self.speaking
 
 def conjTest(verb):
-  string = "Base: " + verb.word + "\nPresent:\nI "+ verb.Pres1 +"\nYou "+ verb.Pres2 +"\nHe/she/it "+ verb.Pres3 + "\nWe/they " + verb.Pres2 +"\nPast:\nI "+ verb.Past1 +"\nYou "+ verb.Past2 +"\nHe/she/it "+ verb.Past1 +"\nWe/they "+ verb.Past2 +"\nPast Perfect: I/you/we/they have "+ verb.pastPer+"\nPresent Perfect: I/you/we/they had "+ verb.pastPer +"\nFuture Perfect: I/you/we/they will have "+ verb.pastPer +"\nConditional Perfect: I/you/we/they have "+ verb.pastPer +"\nConditional Present: I/you/we/they would "+ verb.word +"\nGerund: I am "+ verb.gerund +"\nPast Participle: I have "+ verb.pastPer
+  string = "Base: " + verb.word + "\nPresent:\nI "+ verb.Pres1 +"\nYou "+
+           verb.Pres2 +"\nHe/she/it "+ verb.Pres3 + "\nWe/they " + verb.Pres2 
+           +"\nPast:\nI "+ verb.Past1 +"\nYou "+ verb.Past2 +"\nHe/she/it "+
+           verb.Past1 +"\nWe/they "+ verb.Past2 +
+           "\nPast Perfect: I/you/we/they have "+ verb.pastPer+
+           "\nPresent Perfect: I/you/we/they had "+ verb.pastPer +
+           "\nFuture Perfect: I/you/we/they will have "+ verb.pastPer
+           +"\nConditional Perfect: I/you/we/they have "+ verb.pastPer
+           +"\nConditional Present: I/you/we/they would "+ verb.word +
+           "\nGerund: I am "+ verb.gerund +"\nPast Participle: I have "
+           + verb.pastPer
   print string
   return string
 
